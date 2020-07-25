@@ -3,7 +3,9 @@ package com.example.calcapp;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -20,9 +22,52 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         txtSol = (TextView) findViewById(R.id.txtSolution);
-        val1 =  val2 = res = 0d;
-        oper = "";
+        TextView textView = (TextView) findViewById(R.id.txtInput);
+
+        if (savedInstanceState != null) {
+            val1 = savedInstanceState.getDouble ("Val1");
+            val2 = savedInstanceState.getDouble ("Val2");
+            res = savedInstanceState.getDouble ("Res");
+            oper = savedInstanceState.getString ("Oper");
+            mode = savedInstanceState.getBoolean ("Mode");
+            String solTxt = savedInstanceState.getString ("SolText");
+            txtSol.setText(solTxt);
+
+            String s = "";
+
+            if (res % 1 == 0){
+                s = String.valueOf((int)res);
+            }
+            else {
+
+                s = String.valueOf(res);
+            }
+            if (s.length() > 9){
+                s = "~" + s.substring(0,8);
+            }
+            textView.setText(s);
+        }
+        else {
+            val1 = val2 = res = 0d;
+            oper = "";
+        }
     }
+
+
+    @Override
+    protected void onSaveInstanceState (Bundle outState) {
+        super.onSaveInstanceState (outState);
+        outState.putDouble ("Val1", val1);
+        outState.putDouble ("Val2", val2);
+        outState.putDouble ("Res", res);
+        outState.putString("Oper",oper);
+        outState.putBoolean("Mode", mode);
+        outState.putString("SolText",txtSol.getText().toString());
+    }
+
+
+
+
     public void clickBtn(View view, String num) {
         TextView textView = (TextView) findViewById(R.id.txtInput);
         if (mode){
@@ -140,10 +185,10 @@ public class MainActivity extends AppCompatActivity {
             val2 = Double.parseDouble(textView.getText().toString());
             txtSol.setText(txtSol.getText() + textView.getText().toString() + "=");
         }
-        
+
         if (oper == "+") {
             res = val1 + val2;
-          
+
         }
         else if (oper == "-"){
             res = val1 - val2;
